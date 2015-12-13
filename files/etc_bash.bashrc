@@ -1,0 +1,186 @@
+# Managed with Ansible
+
+# If not running interactively, don't do anything
+[ -z "$PS1" ] && return
+
+
+# ignore duplicate lines and lines starting with spaces
+export HISTCONTROL=ignoreboth
+
+# some large history size
+HISTSIZE=100000
+HISTFILESIZE=1000000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+shopt -s globstar
+
+# more pattern matching
+shopt -s extglob
+
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+
+# if the command-not-found package is installed, use it
+if [ -x /usr/lib/command-not-found -o -x /usr/share/command-not-found/command-not-found ]; then
+  function command_not_found_handle {
+    # check because c-n-f could've been removed in the meantime
+    if [ -x /usr/lib/command-not-found ]; then
+      /usr/lib/command-not-found -- "$1"
+      return $?
+    elif [ -x /usr/share/command-not-found/command-not-found ]; then
+      /usr/share/command-not-found/command-not-found -- "$1"
+      return $?
+    else
+      printf "%s: command not found\n" "$1" >&2
+      return 127
+    fi
+  }
+fi
+
+
+function __printexitstatus {
+  MYEXITSTATUS="$?"
+  [ "$MYEXITSTATUS" = "0" ] && return 0
+  echo -e "\033[1;31mEXIT STATUS: $MYEXITSTATUS\033[0m"
+}
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+  xterm*|rxvt*) PROMPT_COMMAND='__printexitstatus; echo -ne "\e]0;${USER}@${HOSTNAME}: ${PWD}\007"' ;;
+  *) PROMPT_COMMAND='__printexitstatus' ;;
+esac
+
+
+# colors, yay!
+# http://misc.flogisoft.com/bash/tip_colors_and_formatting
+if [ "$TERM" = xterm ] ; then
+  TERM="xterm-256color"
+fi
+
+function __tput_reset {
+      echo "\[\e[0m\]"
+}
+function __tput_bold {
+      echo "\[\e[1m\]"
+}
+function __tput_underline {
+      echo "\[\e[4m\]"
+}
+function __tput_nounderline {
+      echo "\[\e[24m\]"
+}
+
+case "$(tput colors)" in
+  256)
+    function __tput_fc {
+      local color="$1"
+      echo "\[\e[38;5;${color}m\]"
+    }
+    function __tput_bc {
+      local color="$1"
+      echo "\[\e[48;5;${color}m\]"
+    }
+    ;;
+    # We do NOT support 88 colors as it's a completely different color palette
+    8|16|88)
+    function __tput_fc {
+      local color=$[30 + $1%8]
+      echo "\[\e[${color}m\]"
+    }
+    function __tput_bc {
+      local color=$[40 + $1%8]
+      echo "\[\e[${color}m\]"
+    }
+    ;;
+esac
+
+function __screen_info {
+    if [[ "$STY" != "" ]] ; then
+        SCID=$(sed 's|\..*||' <<<$STY)
+        echo -n "$(__tput_bold)[SCR:$(__tput_reset)$SCID:$WINDOW$(__tput_bold)]$(__tput_reset) "
+    fi
+}
+
+# debian chroot
+PS1="\${debian_chroot:+$(__tput_bc 123)$(__tput_fc 127)($debian_chroot)}"
+# screen info
+PS1="${PS1}$(__screen_info)"
+# user
+PS1="${PS1}$(__tput_bc 0)$(__tput_bold)"
+case "$UID" in
+  0) PS1="${PS1}$(__tput_fc 197)$(__tput_underline)\u$(__tput_nounderline)" ;;
+  *) PS1="${PS1}$(__tput_fc 84)\u" ;;
+esac
+# host
+PS1="${PS1}$(__tput_reset)$(__tput_bold)@$(__tput_fc 172)\h$(__tput_reset)"
+# current working directory
+PS1="${PS1}:\w"
+# newline and $
+PS1="${PS1}\n\\\$ "
+
+# dircolors & coloring aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+fi
+alias ls='ls --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias grep='grep --color=auto'
+
+# convenience aliases
+alias l='ls -la'
+alias la='ls -A'
+alias ll='ls -alF'
+alias ..='cd ..'
+alias -- -='cd -'
+
+
+# include .bashrc if it exists
+if [ -f "$HOME/.aliases" ]; then
+    . "$HOME/.aliases"
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+
+# we're done here, just crap below
+return
+#################################################################
+
+# enable bash completion in interactive shells
+#if ! shopt -oq posix; then
+#  if [ -f /usr/share/bash-completion/bash_completion ]; then
+#    . /usr/share/bash-completion/bash_completion
+#  elif [ -f /etc/bash_completion ]; then
+#    . /etc/bash_completion
+#  fi
+#fi
+
+# sudo hint
+#if [ ! -e "$HOME/.sudo_as_admin_successful" ] && [ ! -e "$HOME/.hushlogin" ] ; then
+#    case " $(groups) " in *\ admin\ *)
+#    if [ -x /usr/bin/sudo ]; then
+#	cat <<-EOF
+#	To run a command as administrator (user "root"), use "sudo <command>".
+#	See "man sudo_root" for details.
+#
+#	EOF
+#    fi
+#    esac
+#fi
