@@ -1,12 +1,26 @@
 ---
 - name: install packages
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time=1800
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 1800
   with_items:
     - bash
     - bash-completion
 
 - name: copy system-wide profile
-  template: src=etc_profile.d_Z00-xdg.sh.j2 dest=/etc/profile.d/Z00-xdg.sh owner=root group=root mode=0644
+  template:
+    src: etc_profile.d_Z00-xdg.sh.j2
+    dest: /etc/profile.d/Z00-xdg.sh
+    owner: root
+    group: root
+    mode: 0644
 
 - name: copy system-wide bashrc
-  copy: src=etc_bash.bashrc dest=/etc/bash.bashrc owner=root group=root mode=0644
+  copy:
+    src: etc_bash.bashrc
+    dest: /etc/bash.bashrc
+    owner: root
+    group: root
+    mode: 0644
