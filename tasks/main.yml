@@ -1,10 +1,8 @@
 ---
 - name: install packages
-  apt:
+  package:
     name: "{{ item }}"
     state: present
-    update_cache: yes
-    cache_valid_time: 1800
   with_items:
     - bash
     - bash-completion
@@ -17,10 +15,18 @@
     group: root
     mode: 0644
 
+- set_fact:
+    bashrc_path: /etc/bash.bashrc
+  when: ansible_distribution == "Debian"
+
+- set_fact:
+    bashrc_path: /etc/bashrc
+  when: ansible_distribution == "Fedora"
+
 - name: copy system-wide bashrc
   copy:
     src: etc_bash.bashrc
-    dest: /etc/bash.bashrc
+    dest: "{{ bashrc_path }}"
     owner: root
     group: root
     mode: 0644
