@@ -24,8 +24,8 @@
   when: ansible_distribution == "Fedora"
 
 - name: copy system-wide bashrc
-  copy:
-    src: etc_bash.bashrc
+  template:
+    src: etc_bash.bashrc.j2
     dest: "{{ bashrc_path }}"
     owner: root
     group: root

@@ -125,7 +125,11 @@ case "$UID" in
   *) PS1="${PS1}$(__tput_fc 84)\u" ;;
 esac
 # host
+{% if 'test' not in group_names %}
 PS1="${PS1}$(__tput_reset)$(__tput_bold)@$(__tput_fc 172)\h$(__tput_reset)"
+{% else %}
+PS1="${PS1}$(__tput_reset)$(__tput_bold)@$(__tput_bc 52)$(__tput_fc 34)\h$(__tput_reset)"
+{% endif %}
 # current working directory
 PS1="${PS1}:\w"
 # newline and $
