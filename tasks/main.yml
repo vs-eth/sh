@@ -30,3 +30,11 @@
     owner: root
     group: root
     mode: 0644
+
+- name: copy skel bashrc
+  copy:
+    src: etc_skel_bashrc
+    dest: /etc/skel/.bashrc
+    owner: root
+    group: root
+    mode: 0644
