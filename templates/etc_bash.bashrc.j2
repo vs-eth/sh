@@ -125,9 +125,9 @@ case "$UID" in
   *) PS1="${PS1}$(__tput_fc 84)\u" ;;
 esac
 # host
-{% if 'test' in group_names %}
+{% if 'test' in inventory_file %}
 PS1="${PS1}$(__tput_reset)$(__tput_bold)@$(__tput_fc 172)\h$(__tput_reset) $(__tput_fc 34)(test)$(__tput_reset)"
-{% elif 'default' in group_names %}
+{% elif 'production' in inventory_file %}
 PS1="${PS1}$(__tput_reset)$(__tput_bold)@$(__tput_fc 172)\h$(__tput_reset) $(__tput_fc 197)(prod)$(__tput_reset)"
 {% else %}
 PS1="${PS1}$(__tput_reset)$(__tput_bold)@$(__tput_fc 172)\h$(__tput_reset)"
