@@ -2,11 +2,10 @@
 - name: install packages
   become: True
   package:
-    name: "{{ item }}"
+    name:
+      - bash
+      - bash-completion
     state: present
-  with_items:
-    - bash
-    - bash-completion
 
 - name: copy system-wide profile
   become: True
