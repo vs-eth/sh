@@ -126,11 +126,11 @@ case "$UID" in
 esac
 # host
 {% if sh_test_inventory_file in inventory_file %}
-PS1="${PS1}$(__tput_reset)$(__tput_bold)@$(__tput_fc 172)\h$(__tput_reset) $(__tput_fc 34)(test)$(__tput_reset)"
+PS1="${PS1}$(__tput_reset)$(__tput_bold)@$(__tput_fc 172)$(hostname -f)$(__tput_reset) $(__tput_fc 34)(test)$(__tput_reset)"
 {% elif sh_production_inventory_file in inventory_file %}
-PS1="${PS1}$(__tput_reset)$(__tput_bold)@$(__tput_fc 172)\h$(__tput_reset) $(__tput_fc 197)(prod)$(__tput_reset)"
+PS1="${PS1}$(__tput_reset)$(__tput_bold)@$(__tput_fc 172)$(hostname -f)$(__tput_reset) $(__tput_fc 197)(prod)$(__tput_reset)"
 {% else %}
-PS1="${PS1}$(__tput_reset)$(__tput_bold)@$(__tput_fc 172)\h$(__tput_reset)"
+PS1="${PS1}$(__tput_reset)$(__tput_bold)@$(__tput_fc 172)$(hostname -f)$(__tput_reset)"
 {% endif %}
 # current working directory
 PS1="${PS1}:\w"
