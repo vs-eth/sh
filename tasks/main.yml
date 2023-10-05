@@ -1,43 +1,45 @@
 ---
-- name: install packages
-  become: True
-  package:
+- name: Install packages
+  become: true
+  ansible.builtin.package:
     name:
       - bash
       - bash-completion
     state: present
 
-- name: copy system-wide profile
-  become: True
-  template:
+- name: Copy system-wide profile
+  become: true
+  ansible.builtin.template:
     src: etc_profile.d_Z00-xdg.sh.j2
     dest: /etc/profile.d/Z00-xdg.sh
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
-- set_fact:
+- name: Set bashrc path (Debian/Ubuntu)
+  ansible.builtin.set_fact:
     bashrc_path: /etc/bash.bashrc
   when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
 
-- set_fact:
+- name: Set bashrc path (Fedora)
+  ansible.builtin.set_fact:
     bashrc_path: /etc/bashrc
   when: ansible_distribution == "Fedora"
 
-- name: copy system-wide bashrc
-  become: True
-  template:
+- name: Copy system-wide bashrc
+  become: true
+  ansible.builtin.template:
     src: etc_bash.bashrc.j2
     dest: "{{ bashrc_path }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
-- name: copy skel bashrc
-  become: True
-  copy:
+- name: Copy skel bashrc
+  become: true
+  ansible.builtin.copy:
     src: etc_skel_bashrc
     dest: /etc/skel/.bashrc
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
