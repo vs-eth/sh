@@ -163,30 +163,3 @@ fi
 if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
 fi
-
-
-# we're done here, just crap below
-return
-#################################################################
-
-# enable bash completion in interactive shells
-#if ! shopt -oq posix; then
-#  if [ -f /usr/share/bash-completion/bash_completion ]; then
-#    . /usr/share/bash-completion/bash_completion
-#  elif [ -f /etc/bash_completion ]; then
-#    . /etc/bash_completion
-#  fi
-#fi
-
-# sudo hint
-#if [ ! -e "$HOME/.sudo_as_admin_successful" ] && [ ! -e "$HOME/.hushlogin" ] ; then
-#    case " $(groups) " in *\ admin\ *)
-#    if [ -x /usr/bin/sudo ]; then
-#	cat <<-EOF
-#	To run a command as administrator (user "root"), use "sudo <command>".
-#	See "man sudo_root" for details.
-#
-#	EOF
-#    fi
-#    esac
-#fi
